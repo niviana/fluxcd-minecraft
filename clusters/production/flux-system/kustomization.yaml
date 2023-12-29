@@ -5,7 +5,7 @@ resources:
   - gotk-sync.yaml
 labels:
   - pairs:
-      toolkit.niviana.io/tenant: sre-team
+      toolkit.fluxcd.io/tenant: sre-team
 patches:
   - patch: |
       - op: add
