@@ -1,14 +1,8 @@
-#helm repo add agones https://agones.dev/chart/stable
-#helm repo update
-#helm install my-release --namespace agones --create-namespace agones/agones
-
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
   name: agones
-  
-    
 ---
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
@@ -25,15 +19,15 @@ metadata:
   name: agones
   namespace: agones
 spec:
-  interval: 30m
   chart:
     spec:
-      chart: agones      
+      chart: agones
       sourceRef:
         kind: HelmRepository
         name: agones
         namespace: agones
       interval: 12h
+  interval: 30m
   values:
     agones:
       allocator:
@@ -48,4 +42,3 @@ spec:
     gameservers:
       namespaces:
         - shulker-system
- 
