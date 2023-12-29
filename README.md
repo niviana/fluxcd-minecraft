@@ -1,8 +1,8 @@
-# niviana2-kustomize-helm-example
+# fluxcd-minecraft
 
-[![test](https://github.com/niviana/niviana2-kustomize-helm-example/workflows/test/badge.svg)](https://github.com/niviana/niviana2-kustomize-helm-example/actions)
-[![e2e](https://github.com/niviana/niviana2-kustomize-helm-example/workflows/e2e/badge.svg)](https://github.com/niviana/niviana2-kustomize-helm-example/actions)
-[![license](https://img.shields.io/github/license/niviana/niviana2-kustomize-helm-example.svg)](https://github.com/niviana/niviana2-kustomize-helm-example/blob/main/LICENSE)
+[![test](https://github.com/niviana/fluxcd-minecraft/workflows/test/badge.svg)](https://github.com/niviana/fluxcd-minecraft/actions)
+[![e2e](https://github.com/niviana/fluxcd-minecraft/workflows/e2e/badge.svg)](https://github.com/niviana/fluxcd-minecraft/actions)
+[![license](https://img.shields.io/github/license/niviana/fluxcd-minecraft.svg)](https://github.com/niviana/fluxcd-minecraft/blob/main/LICENSE)
 
 For this example we assume a scenario with two clusters: staging and production.
 The end goal is to leverage niviana and Kustomize to manage both clusters while minimizing duplicated declarations.
