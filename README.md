@@ -1,21 +1,21 @@
 # fluxcd-minecraft
 
-[![test](https://github.com/niviana/fluxcd-minecraft/workflows/test/badge.svg)](https://github.com/niviana/fluxcd-minecraft/actions)
-[![e2e](https://github.com/niviana/fluxcd-minecraft/workflows/e2e/badge.svg)](https://github.com/niviana/fluxcd-minecraft/actions)
-[![license](https://img.shields.io/github/license/niviana/fluxcd-minecraft.svg)](https://github.com/niviana/fluxcd-minecraft/blob/main/LICENSE)
+[![test](https://github.com/kanya-approve/fluxcd-minecraft/workflows/test/badge.svg)](https://github.com/kanya-approve/fluxcd-minecraft/actions)
+[![e2e](https://github.com/kanya-approve/fluxcd-minecraft/workflows/e2e/badge.svg)](https://github.com/kanya-approve/fluxcd-minecraft/actions)
+[![license](https://img.shields.io/github/license/kanya-approve/fluxcd-minecraft.svg)](https://github.com/kanya-approve/fluxcd-minecraft/blob/main/LICENSE)
 
 For this example we assume a scenario with two clusters: staging and production.
-The end goal is to leverage niviana and Kustomize to manage both clusters while minimizing duplicated declarations.
+The end goal is to leverage Flux and Kustomize to manage both clusters while minimizing duplicated declarations.
 
-We will configure niviana to install, test and upgrade a demo app using
+We will configure Flux to install, test and upgrade a demo app using
 `HelmRepository` and `HelmRelease` custom resources.
-niviana will monitor the Helm repository, and it will automatically
+Flux will monitor the Helm repository, and it will automatically
 upgrade the Helm releases to their latest chart version based on semver ranges.
 
-![niviana-ui-apps.png](.github/screens/niviana-ui-apps.png)
+![flux-ui-apps.png](.github/screens/flux-ui-apps.png)
 
-On each cluster, we'll install [Weave GitOps](https://docs.gitops.weave.works/) (an OSS UI for niviana)
-to visualise and monitor the workloads managed by niviana.
+On each cluster, we'll install [Weave GitOps](https://docs.gitops.weave.works/) (an OSS UI for Flux)
+to visualise and monitor the workloads managed by Flux.
 
 ## Prerequisites
 
@@ -27,16 +27,16 @@ In order to follow the guide you'll need a GitHub account and a
 [personal access token](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line)
 that can create repositories (check all permissions under `repo`).
 
-Install the niviana CLI on MacOS or Linux using Homebrew:
+Install the Flux CLI on MacOS or Linux using Homebrew:
 
 ```sh
-brew install niviana/tap/niviana
+brew install fluxcd/tap/flux
 ```
 
 Or install the CLI by downloading precompiled binaries using a Bash script:
 
 ```sh
-curl -s https://niviana.io/install.sh | sudo bash
+curl -s https://fluxcd.io/install.sh | sudo bash
 ```
 
 ## Repository structure
@@ -45,7 +45,7 @@ The Git repository contains the following top directories:
 
 - **apps** dir contains Helm releases with a custom configuration per cluster
 - **infrastructure** dir contains common infra tools such as ingress-nginx and agones
-- **clusters** dir contains the niviana configuration per cluster
+- **clusters** dir contains the Flux configuration per cluster
 
 ```
 ├── apps
@@ -84,14 +84,14 @@ The apps configuration is structured into:
     └── shulker-patch.yaml
 ```
 
-In **apps/base/shulker/** dir we have a niviana `HelmRelease` with common values for both clusters:
+In **apps/base/shulker/** dir we have a Flux `HelmRelease` with common values for both clusters:
 
 ```yaml
-apiVersion: helm.toolkit.niviana.io/v2beta2
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
   name: shulker
-  namespace: shulker
+  namespace: shulker-system
 spec:
   releaseName: shulker
   chart:
@@ -100,7 +100,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: shulker
-        namespace: niviana-system
+        namespace: flux-system
   interval: 50m
   values:
     ingress:
@@ -111,7 +111,7 @@ spec:
 In **apps/staging/** dir we have a Kustomize patch with the staging specific values:
 
 ```yaml
-apiVersion: helm.toolkit.niviana.io/v2beta2
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
   name: shulker
@@ -127,17 +127,17 @@ spec:
         - host: shulker.staging
 ```
 
-Note that with ` version: ">=1.0.0-alpha"` we configure niviana to automatically upgrade
+Note that with ` version: ">=1.0.0-alpha"` we configure Flux to automatically upgrade
 the `HelmRelease` to the latest chart version including alpha, beta and pre-releases.
 
 In **apps/production/** dir we have a Kustomize patch with the production specific values:
 
 ```yaml
-apiVersion: helm.toolkit.niviana.io/v2beta2
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
   name: shulker
-  namespace: shulker
+  namespace: shulker-system
 spec:
   chart:
     spec:
@@ -148,7 +148,7 @@ spec:
         - host: shulker.production
 ```
 
-Note that with ` version: ">=1.0.0"` we configure niviana to automatically upgrade
+Note that with ` version: ">=1.0.0"` we configure Flux to automatically upgrade
 the `HelmRelease` to the latest stable chart version (alpha, beta and pre-releases will be ignored).
 
 ### Infrastructure
@@ -171,10 +171,10 @@ The infrastructure is structured into:
     └── kustomization.yaml
 ```
 
-In **infrastructure/controllers/** dir we have the niviana `HelmRepository` and `HelmRelease` definitions such as:
+In **infrastructure/controllers/** dir we have the Flux `HelmRepository` and `HelmRelease` definitions such as:
 
 ```yaml
-apiVersion: helm.toolkit.niviana.io/v2beta2
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
   name: agones
@@ -194,8 +194,8 @@ spec:
     installCRDs: true
 ```
 
-Note that with ` interval: 12h` we configure niviana to pull the Helm repository index every twelfth hours to check for updates.
-If the new chart version that matches the `1.x` semver range is found, niviana will upgrade the release.
+Note that with ` interval: 12h` we configure Flux to pull the Helm repository index every twelfth hours to check for updates.
+If the new chart version that matches the `1.x` semver range is found, Flux will upgrade the release.
 
 In **infrastructure/configs/** dir we have Kubernetes custom resources, such as the Let's Encrypt issuer:
 
@@ -207,7 +207,7 @@ metadata:
 spec:
   acme:
     # Replace the email address with your own contact email
-    email: nivianabot@users.noreply.github.com
+    email: fluxcdbot@users.noreply.github.com
     server: https://acme-staging-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-nginx
@@ -220,11 +220,11 @@ spec:
 In **clusters/production/infrastructure.yaml** we replace the Let's Encrypt server value to point to the production API:
 
 ```yaml
-apiVersion: kustomize.toolkit.niviana.io/v1
+apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: infra-configs
-  namespace: niviana-system
+  namespace: flux-system
 spec:
   # ...omitted for brevity
   dependsOn:
@@ -239,12 +239,12 @@ spec:
         name: letsencrypt
 ```
 
-Note that with `dependsOn` we tell niviana to first install or upgrade the controllers and only then the configs.
-This ensures that the Kubernetes CRDs are registered on the cluster, before niviana applies any custom resources.
+Note that with `dependsOn` we tell Flux to first install or upgrade the controllers and only then the configs.
+This ensures that the Kubernetes CRDs are registered on the cluster, before Flux applies any custom resources.
 
 ## Bootstrap staging and production
 
-The clusters dir contains the niviana configuration:
+The clusters dir contains the Flux configuration:
 
 ```
 ./clusters/
@@ -256,28 +256,28 @@ The clusters dir contains the niviana configuration:
     └── infrastructure.yaml
 ```
 
-In **clusters/staging/** dir we have the niviana Kustomization definitions, for example:
+In **clusters/staging/** dir we have the Flux Kustomization definitions, for example:
 
 ```yaml
-apiVersion: kustomize.toolkit.niviana.io/v1
+apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: apps
-  namespace: niviana-system
+  namespace: flux-system
 spec:
   interval: 10m0s
   dependsOn:
     - name: infra-configs
   sourceRef:
     kind: GitRepository
-    name: niviana-system
+    name: flux-system
   path: ./apps/staging
   prune: true
   wait: true
 ```
 
-Note that with `path: ./apps/staging` we configure niviana to sync the staging Kustomize overlay and 
-with `dependsOn` we tell niviana to create the infrastructure items before deploying the apps.
+Note that with `path: ./apps/staging` we configure Flux to sync the staging Kustomize overlay and 
+with `dependsOn` we tell Flux to create the infrastructure items before deploying the apps.
 
 Fork this repository on your personal GitHub account and export your GitHub access token, username and repo name:
 
@@ -290,13 +290,13 @@ export GITHUB_REPO=<repository-name>
 Verify that your staging cluster satisfies the prerequisites with:
 
 ```sh
-niviana check --pre
+flux check --pre
 ```
 
-Set the kubectl context to your staging cluster and bootstrap niviana:
+Set the kubectl context to your staging cluster and bootstrap Flux:
 
 ```sh
-niviana bootstrap github \
+flux bootstrap github \
     --context=staging \
     --owner=${GITHUB_USER} \
     --repository=${GITHUB_REPO} \
@@ -305,17 +305,17 @@ niviana bootstrap github \
     --path=clusters/staging
 ```
 
-The bootstrap command commits the manifests for the niviana components in `clusters/staging/niviana-system` dir
+The bootstrap command commits the manifests for the Flux components in `clusters/staging/flux-system` dir
 and creates a deploy key with read-only access on GitHub, so it can pull changes inside the cluster.
 
 Watch for the Helm releases being installed on staging:
 
 ```console
-$ watch niviana get helmreleases --all-namespaces
+$ watch flux get helmreleases --all-namespaces
 
 NAMESPACE    	NAME         	REVISION	SUSPENDED	READY	MESSAGE 
 agones 	agones 	v1.11.0 	False    	True 	Release reconciliation succeeded
-niviana-system  	weave-gitops 	4.0.12   	False    	True 	Release reconciliation succeeded
+flux-system  	weave-gitops 	4.0.12   	False    	True 	Release reconciliation succeeded
 ingress-nginx	ingress-nginx	4.4.2   	False    	True 	Release reconciliation succeeded
 shulker      	shulker      	6.3.0   	False    	True 	Release reconciliation succeeded
 ```
@@ -332,10 +332,10 @@ $ curl -H "Host: shulker.staging" http://localhost:8080
 }
 ```
 
-Bootstrap niviana on production by setting the context and path to your production cluster:
+Bootstrap Flux on production by setting the context and path to your production cluster:
 
 ```sh
-niviana bootstrap github \
+flux bootstrap github \
     --context=production \
     --owner=${GITHUB_USER} \
     --repository=${GITHUB_REPO} \
@@ -347,47 +347,47 @@ niviana bootstrap github \
 Watch the production reconciliation:
 
 ```console
-$ niviana get kustomizations --watch
+$ flux get kustomizations --watch
 
 NAME             	REVISION     	SUSPENDED	READY	MESSAGE                         
 apps             	main/696182e	False    	True 	Applied revision: main/696182e	
-niviana-system      	main/696182e	False    	True 	Applied revision: main/696182e	
+flux-system      	main/696182e	False    	True 	Applied revision: main/696182e	
 infra-configs    	main/696182e	False    	True 	Applied revision: main/696182e	
 infra-controllers	main/696182e	False    	True 	Applied revision: main/696182e	
 ```
 
-### Access the niviana UI
+### Access the Flux UI
 
-To access the niviana UI on a cluster, first start port forwarding with:
+To access the Flux UI on a cluster, first start port forwarding with:
 
 ```sh
-kubectl -n niviana-system port-forward svc/weave-gitops 9001:9001
+kubectl -n flux-system port-forward svc/weave-gitops 9001:9001
 ```
 
-Navigate to http://localhost:9001 and login using the username `admin` and the password `niviana`.
+Navigate to http://localhost:9001 and login using the username `admin` and the password `flux`.
 
 [Weave GitOps](https://docs.gitops.weave.works/) provides insights into your application deployments,
-and makes continuous delivery with niviana easier to adopt and scale across your teams.
+and makes continuous delivery with Flux easier to adopt and scale across your teams.
 The GUI provides a guided experience to build understanding and simplify getting started for new users;
-they can easily discover the relationship between niviana objects and navigate to deeper levels of information as required.
+they can easily discover the relationship between Flux objects and navigate to deeper levels of information as required.
 
-![niviana-ui-depends-on](.github/screens/niviana-ui-depends-on.png)
+![flux-ui-depends-on](.github/screens/flux-ui-depends-on.png)
 
 You can change the admin password bcrypt hash in **infrastructure/controllers/weave-gitops.yaml**:
 
 ```yaml
-apiVersion: helm.toolkit.niviana.io/v2beta2
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
   name: weave-gitops
-  namespace: niviana-system
+  namespace: flux-system
 spec:
   # ...omitted for brevity
   values:
     adminUser:
       create: true
       username: admin
-      # bcrypt hash for password "niviana"
+      # bcrypt hash for password "flux"
       passwordHash: "$2a$10$P/tHQ1DNFXdvX0zRGA8LPeSOyb0JXq9rP3fZ4W8HGTpLV7qHDlWhe"
 ```
 
@@ -429,10 +429,10 @@ Push the changes to the main branch:
 git add -A && git commit -m "add dev cluster" && git push
 ```
 
-Set the kubectl context and path to your dev cluster and bootstrap niviana:
+Set the kubectl context and path to your dev cluster and bootstrap Flux:
 
 ```sh
-niviana bootstrap github \
+flux bootstrap github \
     --context=dev \
     --owner=${GITHUB_USER} \
     --repository=${GITHUB_REPO} \
@@ -449,7 +449,7 @@ e.g. `production-clone` and reuse the `production` definitions.
 Bootstrap the `production-clone` cluster:
 
 ```sh
-niviana bootstrap github \
+flux bootstrap github \
     --context=production-clone \
     --owner=${GITHUB_USER} \
     --repository=${GITHUB_REPO} \
@@ -470,12 +470,12 @@ Create a `kustomization.yaml` inside the `clusters/production-clone` dir:
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - niviana-system
+  - flux-system
   - ../production/infrastructure.yaml
   - ../production/apps.yaml
 ```
 
-Note that besides the `niviana-system` kustomize overlay, we also include
+Note that besides the `flux-system` kustomize overlay, we also include
 the `infrastructure` and `apps` manifests from the production dir.
 
 Push the changes to the main branch:
@@ -484,10 +484,10 @@ Push the changes to the main branch:
 git add -A && git commit -m "add production clone" && git push
 ```
 
-Tell niviana to deploy the production workloads on the `production-clone` cluster:
+Tell Flux to deploy the production workloads on the `production-clone` cluster:
 
 ```sh
-niviana reconcile kustomization niviana-system \
+flux reconcile kustomization flux-system \
     --context=production-clone \
     --with-source 
 ```
@@ -500,4 +500,4 @@ a pull requests is merged into the main branch and synced on the cluster.
 This repository contains the following GitHub CI workflows:
 
 * the [test](./.github/workflows/test.yaml) workflow validates the Kubernetes manifests and Kustomize overlays with [kubeconform](https://github.com/yannh/kubeconform)
-* the [e2e](./.github/workflows/e2e.yaml) workflow starts a Kubernetes cluster in CI and tests the staging setup by running niviana in Kubernetes Kind
+* the [e2e](./.github/workflows/e2e.yaml) workflow starts a Kubernetes cluster in CI and tests the staging setup by running Flux in Kubernetes Kind

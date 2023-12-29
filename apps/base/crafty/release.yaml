@@ -1,0 +1,38 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: crafty
+  namespace: crafty
+spec:
+  chart:
+    spec:
+      chart: crafty-4
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: truecharts
+  interval: 50m
+  install:
+    remediation:
+      retries: 3
+  values:
+    common:
+      fallbackDefaults:
+        pvcSize: 5Gi
+        storageClass: hostpath
+      kubectlImage:
+        repository: bitnami/kubectl
+        tag: latest
+    persistence:
+      import:
+        enabled: false
+      logs:
+        enabled: false
+    portal:
+      open:
+        enabled: false
+    service:
+      bedrock:
+        enabled: false
+      redirects:
+        enabled: false

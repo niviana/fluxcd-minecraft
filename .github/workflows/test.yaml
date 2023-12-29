@@ -14,10 +14,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup yq
-        uses: nivianacd/pkg/actions/yq@main
+        uses: fluxcd/pkg/actions/yq@main
       - name: Setup kubeconform
-        uses: nivianacd/pkg/actions/kubeconform@main
+        uses: fluxcd/pkg/actions/kubeconform@main
       - name: Setup kustomize
-        uses: nivianacd/pkg/actions/kustomize@main
+        uses: fluxcd/pkg/actions/kustomize@main
       - name: Validate manifests
         run: bash ./scripts/validate.sh
