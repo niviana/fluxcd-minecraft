@@ -4,9 +4,9 @@ kind: Namespace
 metadata:
   name: ingress-nginx
   labels:
-    toolkit.fluxcd.io/tenant: sre-team
+    toolkit.niviana.io/tenant: sre-team
 ---
-apiVersion: source.toolkit.fluxcd.io/v1beta2
+apiVersion: source.toolkit.niviana.io/v1beta2
 kind: HelmRepository
 metadata:
   name: ingress-nginx
@@ -15,7 +15,7 @@ spec:
   interval: 24h
   url: https://kubernetes.github.io/ingress-nginx
 ---
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
+apiVersion: helm.toolkit.niviana.io/v2beta2
 kind: HelmRelease
 metadata:
   name: ingress-nginx

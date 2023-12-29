@@ -1,8 +1,8 @@
 # flux2-kustomize-helm-example
 
-[![test](https://github.com/fluxcd/flux2-kustomize-helm-example/workflows/test/badge.svg)](https://github.com/fluxcd/flux2-kustomize-helm-example/actions)
-[![e2e](https://github.com/fluxcd/flux2-kustomize-helm-example/workflows/e2e/badge.svg)](https://github.com/fluxcd/flux2-kustomize-helm-example/actions)
-[![license](https://img.shields.io/github/license/fluxcd/flux2-kustomize-helm-example.svg)](https://github.com/fluxcd/flux2-kustomize-helm-example/blob/main/LICENSE)
+[![test](https://github.com/niviana/flux2-kustomize-helm-example/workflows/test/badge.svg)](https://github.com/niviana/flux2-kustomize-helm-example/actions)
+[![e2e](https://github.com/niviana/flux2-kustomize-helm-example/workflows/e2e/badge.svg)](https://github.com/niviana/flux2-kustomize-helm-example/actions)
+[![license](https://img.shields.io/github/license/niviana/flux2-kustomize-helm-example.svg)](https://github.com/niviana/flux2-kustomize-helm-example/blob/main/LICENSE)
 
 For this example we assume a scenario with two clusters: staging and production.
 The end goal is to leverage Flux and Kustomize to manage both clusters while minimizing duplicated declarations.
@@ -30,13 +30,13 @@ that can create repositories (check all permissions under `repo`).
 Install the Flux CLI on MacOS or Linux using Homebrew:
 
 ```sh
-brew install fluxcd/tap/flux
+brew install niviana/tap/flux
 ```
 
 Or install the CLI by downloading precompiled binaries using a Bash script:
 
 ```sh
-curl -s https://fluxcd.io/install.sh | sudo bash
+curl -s https://niviana.io/install.sh | sudo bash
 ```
 
 ## Repository structure
@@ -87,7 +87,7 @@ The apps configuration is structured into:
 In **apps/base/podinfo/** dir we have a Flux `HelmRelease` with common values for both clusters:
 
 ```yaml
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
+apiVersion: helm.toolkit.niviana.io/v2beta2
 kind: HelmRelease
 metadata:
   name: podinfo
@@ -111,7 +111,7 @@ spec:
 In **apps/staging/** dir we have a Kustomize patch with the staging specific values:
 
 ```yaml
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
+apiVersion: helm.toolkit.niviana.io/v2beta2
 kind: HelmRelease
 metadata:
   name: podinfo
@@ -133,7 +133,7 @@ the `HelmRelease` to the latest chart version including alpha, beta and pre-rele
 In **apps/production/** dir we have a Kustomize patch with the production specific values:
 
 ```yaml
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
+apiVersion: helm.toolkit.niviana.io/v2beta2
 kind: HelmRelease
 metadata:
   name: podinfo
@@ -174,7 +174,7 @@ The infrastructure is structured into:
 In **infrastructure/controllers/** dir we have the Flux `HelmRepository` and `HelmRelease` definitions such as:
 
 ```yaml
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
+apiVersion: helm.toolkit.niviana.io/v2beta2
 kind: HelmRelease
 metadata:
   name: cert-manager
@@ -207,7 +207,7 @@ metadata:
 spec:
   acme:
     # Replace the email address with your own contact email
-    email: fluxcdbot@users.noreply.github.com
+    email: nivianabot@users.noreply.github.com
     server: https://acme-staging-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-nginx
@@ -220,7 +220,7 @@ spec:
 In **clusters/production/infrastructure.yaml** we replace the Let's Encrypt server value to point to the production API:
 
 ```yaml
-apiVersion: kustomize.toolkit.fluxcd.io/v1
+apiVersion: kustomize.toolkit.niviana.io/v1
 kind: Kustomization
 metadata:
   name: infra-configs
@@ -259,7 +259,7 @@ The clusters dir contains the Flux configuration:
 In **clusters/staging/** dir we have the Flux Kustomization definitions, for example:
 
 ```yaml
-apiVersion: kustomize.toolkit.fluxcd.io/v1
+apiVersion: kustomize.toolkit.niviana.io/v1
 kind: Kustomization
 metadata:
   name: apps
@@ -376,7 +376,7 @@ they can easily discover the relationship between Flux objects and navigate to d
 You can change the admin password bcrypt hash in **infrastructure/controllers/weave-gitops.yaml**:
 
 ```yaml
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
+apiVersion: helm.toolkit.niviana.io/v2beta2
 kind: HelmRelease
 metadata:
   name: weave-gitops
