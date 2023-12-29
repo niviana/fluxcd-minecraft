@@ -48,4 +48,4 @@ spec:
     gameservers:
       namespaces:
         - shulker-system
-  interval: 5m0s
+ 
