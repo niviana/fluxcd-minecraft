@@ -1,8 +1,8 @@
 # fluxcd-minecraft
 
-[![test](https://github.com/kanya-approve/fluxcd-minecraft/workflows/test/badge.svg)](https://github.com/kanya-approve/fluxcd-minecraft/actions)
-[![e2e](https://github.com/kanya-approve/fluxcd-minecraft/workflows/e2e/badge.svg)](https://github.com/kanya-approve/fluxcd-minecraft/actions)
-[![license](https://img.shields.io/github/license/kanya-approve/fluxcd-minecraft.svg)](https://github.com/kanya-approve/fluxcd-minecraft/blob/main/LICENSE)
+[![test](https://github.com/niviana/fluxcd-minecraft/workflows/test/badge.svg)](https://github.com/niviana/fluxcd-minecraft/actions)
+[![e2e](https://github.com/niviana/fluxcd-minecraft/workflows/e2e/badge.svg)](https://github.com/niviana/fluxcd-minecraft/actions)
+[![license](https://img.shields.io/github/license/niviana/fluxcd-minecraft.svg)](https://github.com/niviana/fluxcd-minecraft/blob/main/LICENSE)
 
 For this example we assume a scenario with two clusters: staging and production.
 The end goal is to leverage Flux and Kustomize to manage both clusters while minimizing duplicated declarations.

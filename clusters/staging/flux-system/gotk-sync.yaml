@@ -11,7 +11,7 @@ spec:
     branch: main
   secretRef:
     name: flux-system
-  url: ssh://git@github.com/kanya-approve/fluxcd-minecraft
+  url: ssh://git@github.com/niviana/fluxcd-minecraft
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
