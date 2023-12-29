@@ -44,7 +44,7 @@ curl -s https://niviana.io/install.sh | sudo bash
 The Git repository contains the following top directories:
 
 - **apps** dir contains Helm releases with a custom configuration per cluster
-- **infrastructure** dir contains common infra tools such as ingress-nginx and agones-system
+- **infrastructure** dir contains common infra tools such as ingress-nginx and agones
 - **clusters** dir contains the niviana configuration per cluster
 
 ```
@@ -165,7 +165,7 @@ The infrastructure is structured into:
 │   ├── network-policies.yaml
 │   └── kustomization.yaml
 └── controllers
-    ├── agones-system.yaml
+    ├── agones.yaml
     ├── ingress-nginx.yaml
     ├── weave-gitops.yaml
     └── kustomization.yaml
@@ -177,18 +177,18 @@ In **infrastructure/controllers/** dir we have the niviana `HelmRepository` and 
 apiVersion: helm.toolkit.niviana.io/v2beta2
 kind: HelmRelease
 metadata:
-  name: agones-system
-  namespace: agones-system
+  name: agones
+  namespace: agones
 spec:
   interval: 30m
   chart:
     spec:
-      chart: agones-system
+      chart: agones
       version: "1.x"
       sourceRef:
         kind: HelmRepository
-        name: agones-system
-        namespace: agones-system
+        name: agones
+        namespace: agones
       interval: 12h
   values:
     installCRDs: true
@@ -200,7 +200,7 @@ If the new chart version that matches the `1.x` semver range is found, niviana w
 In **infrastructure/configs/** dir we have Kubernetes custom resources, such as the Let's Encrypt issuer:
 
 ```yaml
-apiVersion: agones-system.io/v1
+apiVersion: agones.io/v1
 kind: ClusterIssuer
 metadata:
   name: letsencrypt
@@ -314,7 +314,7 @@ Watch for the Helm releases being installed on staging:
 $ watch niviana get helmreleases --all-namespaces
 
 NAMESPACE    	NAME         	REVISION	SUSPENDED	READY	MESSAGE 
-agones-system 	agones-system 	v1.11.0 	False    	True 	Release reconciliation succeeded
+agones 	agones 	v1.11.0 	False    	True 	Release reconciliation succeeded
 niviana-system  	weave-gitops 	4.0.12   	False    	True 	Release reconciliation succeeded
 ingress-nginx	ingress-nginx	4.4.2   	False    	True 	Release reconciliation succeeded
 podinfo      	podinfo      	6.3.0   	False    	True 	Release reconciliation succeeded
