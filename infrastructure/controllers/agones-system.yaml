@@ -1,0 +1,51 @@
+#helm repo add agones https://agones.dev/chart/stable
+#helm repo update
+#helm install my-release --namespace agones-system --create-namespace agones/agones
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: agones-system
+  
+    
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: agones-system
+  namespace: agones-system
+spec:
+  interval: 24h
+  url: https://agones.dev/chart/stable
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: agones-system
+  namespace: agones-system
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: agones-system      
+      sourceRef:
+        kind: HelmRepository
+        name: agones-system
+        namespace: agones-system
+      interval: 12h
+  values:
+    agones:
+      allocator:
+        install: true
+        service:
+          serviceType: ClusterIP
+      ping:
+        http:
+          serviceType: ClusterIP
+        udp:
+          serviceType: ClusterIP
+    gameservers:
+      namespaces:
+        - shulker-system
+  interval: 5m0s
